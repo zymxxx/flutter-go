@@ -42,18 +42,6 @@ class _ListRefreshState extends State<ListRefresh> {
     });
   }
 
-//  回弹效果
-  backElasticEffect() {
-//    double edge = 50.0;
-//    double offsetFromBottom = _scrollController.position.maxScrollExtent - _scrollController.position.pixels;
-//    if (offsetFromBottom < edge) { // 添加一个动画没有更多数据的时候 ListView 向下移动覆盖正在加载更多数据的标志
-//      _scrollController.animateTo(
-//          _scrollController.offset - (edge -offsetFromBottom),
-//          duration: new Duration(milliseconds: 1000),
-//          curve: Curves.easeOut);
-//    }
-  }
-
 // list探底，执行的具体事件
   Future _getMoreData() async {
     if (!isLoading && _hasMore) {
@@ -71,11 +59,9 @@ class _ListRefreshState extends State<ListRefresh> {
           isLoading = false;
         });
       }
-      backElasticEffect();
     } else if (!isLoading && !_hasMore) {
       // 这样判断,减少以后的绘制
       _pageIndex = 0;
-      backElasticEffect();
     }
   }
 
@@ -127,19 +113,20 @@ class _ListRefreshState extends State<ListRefresh> {
         child: new Center(
             child: Column(
           children: <Widget>[
-            new Opacity(
-              opacity: isLoading ? 1.0 : 0.0,
-              child: new CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.blue)),
-            ),
+            isLoading
+                ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(Colors.blue),
+                  )
+                : SizedBox(
+                    height: 36,
+                  ),
             SizedBox(height: 20.0),
             Text(
               '稍等片刻更精彩...',
               style: TextStyle(fontSize: 14.0),
-            )
+            ),
           ],
         )
-            //child:
             ),
       );
     } else {
@@ -167,11 +154,8 @@ class _ListRefreshState extends State<ListRefresh> {
             }
           }
           if (index == items.length) {
-            //return _buildLoadText();
             return _buildProgressIndicator();
           } else {
-            //print('itemsitemsitemsitems:${items[index].title}');
-            //return ListTile(title: Text("Index${index}:${items[index].title}"));
             if (widget.renderItem is Function) {
               return widget.renderItem(index, items[index]);
             }
